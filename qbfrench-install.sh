@@ -13,12 +13,12 @@ function intro ()
 	dialog --backtitle "Installation de moteurs de recherche français pour qBittorrent" \
 		--title "Introduction" \
 		--no-label "Annuler" --yes-label "Continuer" \
-		--colors --yesno "\nBienvenu dans l'installateur \Zb\Z1qbfrench\Zn.\n\nCe script installera des moteurs de recherche français pour \Zb\Z1qBittorent\Zn.\n\nSouhaitez-vous poursuivre l'installation ? " 12 60
+		--colors --yesno "\nBienvenue dans l'installateur \Zb\Z1qbfrench\Zn.\n\nCe script installera des moteurs de recherche français pour \Zb\Z1qBittorent\Zn.\n\nSouhaitez-vous poursuivre l'installation ? " 12 60
 
 	if [ $? = 0 ]
-	then 
+	then
 		choix
-	else 
+	else
 		exit
 	fi
 }
@@ -28,13 +28,11 @@ function choix ()
 {
 	dialog --backtitle "Installation de moteurs de recherche français pour qBittorrent" \
 		--title "Sélection des extensions à installer" --clear \
-        	--ok-label "Valider" --cancel-label "Quitter" \
-        	--colors --checklist "\n- Appuyer sur \Zb\Z1Espace\Zn pour sélectionner les extensions \n\n- Appuyer sur \Zb\Z1Entrée\Zn pour valider votre choix\n\n" 17 60 5 \
-		"omgtorrent" "" off\
-         	"smartorrent" "" off\
-          	"torrentfrancais" "" off\
-           	"cpasbien" "" off\
-            	"t411" "(privé)" off 2> $fichtemp
+		--ok-label "Valider" --cancel-label "Quitter" \
+		--colors --checklist "\n- Appuyer sur \Zb\Z1Espace\Zn pour sélectionner les extensions \n\n- Appuyer sur \Zb\Z1Entrée\Zn pour valider votre choix\n\n" 17 60 5 \
+			"smartorrent" "" off\
+			"torrent9" "" off\
+			"t411" "(privé)" off 2> $fichtemp
 
 	if [ $? = 0 ]
 	then
@@ -44,9 +42,9 @@ function choix ()
 			dialog --backtitle "Installation de moteurs de recherche français pour qBittorrent" --title "Aucune extension sélectionnée !" \
 				--no-label "Annuler" --yes-label "Recommencer" \
 				--colors --yesno "Vous n'avez sélectionné aucune extension pour l'installation.
-- Déplacez-vous dans la liste avec les flèches \Zb\Z1HAUT\Zn et \Zb\Z1BAS\Zn. 
+- Déplacez-vous dans la liste avec les flèches \Zb\Z1HAUT\Zn et \Zb\Z1BAS\Zn.
 - Sélectionner une extension avec la barre d'\Zb\Z1ESPACE\Zn.
-- Deplacez vous entre \"Valider\" et \"Quitter\" avec les felches \Zb\Z1GAUCHE\Zn et \Zb\Z1DROITE\Zn
+- Déplacez-vous entre \"Valider\" et \"Quitter\" avec les flèches \Zb\Z1GAUCHE\Zn et \Zb\Z1DROITE\Zn
 - Validez votre choix avec \Zb\Z1ENTREE\Zn
  " 12 60
 					if [ $? = 0 ]
@@ -63,7 +61,7 @@ function choix ()
 			instal $choix
 		done
 		end
-	else 
+	else
 		exit
 	fi
 }
@@ -75,13 +73,13 @@ function instal ()
 	if [ $1 = 't411' ]
      	then
 		log
-	else 
+	else
 		subst="$1"
-		echo "${!subst}" > "$destination$1.py" 
+		echo "${!subst}" > "$destination$1.py"
 	fi
-}    
+}
 
-##### Definition du loggin de T411
+##### Definition du login de T411
 function log()
 {
 	dialog --backtitle "Installation de moteurs de recherche français pour qBittorrent" --title "Configuration du compte T411" \
@@ -93,10 +91,10 @@ Pour que le moteur de recherche de qBittorent puisse ajouter les torrents à vot
 Entrez votre nom d'utilisateur de T411 :" 14 60 user 2> $fichtemp
 
 	if [ $? = 0 ]
-	then 
+	then
 		login=`cat $fichtemp`
-		pass 
-	else 
+		pass
+	else
 		exit
 	fi
 }
@@ -108,45 +106,45 @@ function pass()
 		--title "Configuration du compte T411" \
         	--ok-label "Valider" --cancel-label "Quitter" \
 		--insecure --passwordbox "
-Pour finaliser l'installation, veuillez renseigner 
-votre mot de passe de connection à T411.
+Pour finaliser l'installation, veuillez renseigner
+votre mot de passe de connexion à T411.
 
 Entrez votre mot de passe :" 14 60 2> $fichtemp
 
 	if [ $? = 0 ]
-	then 
+	then
 		password=`cat $fichtemp`
-		wget  --quiet --post-data="login=$login&password=$password&remember=1"  --save-cookies=cookies.txt --keep-session-cookies "http://www.t411.me/users/login/" -O log
-		test=`cat cookies.txt | grep "pass"`		
+		wget  --quiet --post-data="login=$login&password=$password&remember=1"  --save-cookies=cookies.txt --keep-session-cookies "http://www.t411.ch/users/login/" -O log
+		test=`cat cookies.txt | grep "pass"`
 		if [ "$test" = '' ]
 		then
 			reconf
 		else
-			echo "$t411" | sed "s/my_login/$login/" | sed "s/my_password/$password/" > "$destination""t411.py"
+			echo "$t411" | sed "s/Your_User/$login/" | sed "s/Your_Pass/$password/" > "$destination""t411.py"
 			end
 		fi
 
-	else 
+	else
 		exit
 	fi
 
 }
 
-##### Propose la reconfiguration lors de l'erreur de la configuration d'un tracker privé 
+##### Propose la reconfiguration lors de l'erreur de la configuration d'un tracker privé
 function reconf()
 {
-	dialog --backtitle "Installation de moteurs de recherche français pour qBittorrent" --title "Problème d'autentification sur T411" \
+	dialog --backtitle "Installation de moteurs de recherche français pour qBittorrent" --title "Problème d'authentification sur T411" \
 	--yes-label "Reconfigurer" --no-label "Terminer" \
 	--yesno "
-Ooops... La connexion à T411 a échouée.
+Ooops... La connexion à T411 a échoué.
 $
 Souhaitez-vous essayer de reconfigurer vos identifiants
 ou finaliser l'installation malgré tout ? " 12 60
 
 	if [ $? = 0 ]
-	then 
+	then
 		log
-	else 
+	else
 		end "problem"
 	fi
 }
@@ -160,11 +158,11 @@ function end
 	if  test -z "$1"
 	then
 		dialog --backtitle "Installation de moteurs de recherche français pour qBittorrent" --title "Bravo, c'est fini !" \
-			--sleep 2 --infobox "\nFélicitation, toutes les extensions ont été installées avec succès.\nPensez à redémmarer qBittorent pour que les changements prennent effet." 10 60
+			--sleep 2 --infobox "\nFélicitations, toutes les extensions ont été installées avec succès.\nPensez à redémarrer qBittorent pour que les changements prennent effet." 10 60
 	else
 		dialog --backtitle "Installation de moteurs de recherche français pour qBittorrent" --title "Bravo, c'est fini !" \
-			--sleep 2 --infobox "\nTous les plugins ont été installés.\n\nAttention : T411 semble mal configuré. Dans ce cas qBittorent vous redirigera vers votre navigateur pour télécharger le torrent\nPensez à redémmarer qBittorent pour que les changements prennent effet." 10 60
-        
+			--sleep 2 --infobox "\nTous les plugins ont été installés.\n\nAttention : T411 semble mal configuré. Dans ce cas qBittorent vous redirigera vers votre navigateur pour télécharger le torrent\nPensez à redémarrer qBittorent pour que les changements prennent effet." 10 60
+
 	fi
 
 exit
@@ -189,11 +187,11 @@ class omgtorrent(object):
   url = "http://www.omgtorrent.com"
   name = "OMGtorrent (french)"
   supported_categories = {"all": ""}
-  
+
   def __init__(self):
     self.results = []
     self.parser = self.SimpleSGMLParser(self.results, self.url)
-  
+
   def download_torrent(self, url):
     file, path = tempfile.mkstemp(".torrent")
     file = os.fdopen(file, "wb")
@@ -209,7 +207,7 @@ class omgtorrent(object):
       self.td_counter = None
       self.current_item = None
       self.results = results
-    
+
     def start_a(self, attr):
       params = dict(attr)
       if params.has_key("href") and params.has_key("class") and params["class"] == "torrent":
@@ -219,7 +217,7 @@ class omgtorrent(object):
         self.current_item["link"] = "http://www.omgtorrent.com/clic_dl.php?groupe=torrents&id="+str(params["href"].strip().split("_")[1].split(".")[0])
 
     def handle_data(self, data):
-      if self.td_counter == 0:  
+      if self.td_counter == 0:
         if not self.current_item.has_key("name"):
           self.current_item["name"] = data.strip()
       elif self.td_counter == 1:
@@ -270,19 +268,19 @@ class smartorrent(object):
   url = "http://www.smartorrent.com"
   name = "Smartorrent (french)"
   supported_categories = {"all": ["0"],
-                          "movies": ["57","49","26","1","37","11","29","39","41","2","18","38","17","25"], 
-                          "music": ["54","3"], 
-                          "tv": ["33","43","40"], 
-                          "anime": ["19","44"], 
-                          "games": ["13","20","4","42","14","22","23","28"], 
-                          "books": ["5"], 
-                          "software": ["12","21","46"] 
+                          "movies": ["57","49","26","1","37","11","29","39","41","2","18","38","17","25"],
+                          "music": ["54","3"],
+                          "tv": ["33","43","40"],
+                          "anime": ["19","44"],
+                          "games": ["13","20","4","42","14","22","23","28"],
+                          "books": ["5"],
+                          "software": ["12","21","46"]
                          }
-  
+
   def __init__(self):
     self.results = []
     self.parser = self.SimpleSGMLParser(self.results, self.url)
-  
+
   def download_torrent(self, url):
     opener = urllib2.build_opener(urllib2.BaseHandler())
     file, path = tempfile.mkstemp(".torrent")
@@ -292,7 +290,7 @@ class smartorrent(object):
     file.close()
 
     print path+" "+url
-    
+
   class SimpleSGMLParser(sgmllib.SGMLParser):
     def __init__(self, results, url, *args):
       sgmllib.SGMLParser.__init__(self)
@@ -300,7 +298,7 @@ class smartorrent(object):
       self.td_counter = None
       self.current_item = None
       self.results = results
-    
+
     def start_a(self, attr):
       params = dict(attr)
       if params.has_key("href") and params["href"].startswith("http://smartorrent.com/torrent/Torrent-"):
@@ -387,7 +385,7 @@ class torrentfrancais(object):
       file = os.fdopen(file, "wb")
       file.write(dat)
       file.close()
-      print path+" "+url   
+      print path+" "+url
     else:
       #Open default webbrowser if  CloudFlare is blocking direct connection (quite often with VPN & proxy...)
       webbrowser.open(url, new=2, autoraise=True)
@@ -443,9 +441,9 @@ class torrentfrancais(object):
       i += 1'
 
 
-####### Cpasbien
+####### torrent9
 
-cpasbien='# -*- coding: utf-8 -*-
+torrent9='# -*- coding: utf-8 -*-
 #VERSION: 1.0
 #AUTHOR: Davy39 <davy39@hmamail.com>
 
@@ -454,15 +452,15 @@ cpasbien='# -*- coding: utf-8 -*-
 from novaprinter import prettyPrinter
 import urllib2, tempfile, sgmllib, os
 
-class cpasbien(object):
-  url = "http://www.cpasbien.pe"
-  name = "Cpasbien (french)"
+class torrent9(object):
+  url = "http://www.torrent9.pe"
+  name = "torrent9 (french)"
   supported_categories = {"all": "", "books": "ebook/", "movies": "films/", "tv": "series/", "music": "musique/", "software": "logiciels/", "games": ""}
-  
+
   def __init__(self):
     self.results = []
     self.parser = self.SimpleSGMLParser(self.results, self.url)
-  
+
   def download_torrent(self, url):
     file, path = tempfile.mkstemp(".torrent")
     file = os.fdopen(file, "wb")
@@ -470,7 +468,7 @@ class cpasbien(object):
     file.write(dat)
     file.close()
     print path+" "+url
-    
+
   class SimpleSGMLParser(sgmllib.SGMLParser):
     def __init__(self, results, url, *args):
       sgmllib.SGMLParser.__init__(self)
@@ -478,14 +476,14 @@ class cpasbien(object):
       self.data_counter = None
       self.current_item = None
       self.results = results
-    
+
     def start_a(self, attr):
       params = dict(attr)
-      if params.has_key("href") and params["href"].startswith("http://www.cpasbien.pe/dl-torrent"):
+      if params.has_key("href") and params["href"].startswith("http://www.torrent9.pe/dl-torrent"):
 	self.current_item = {}
         self.data_counter = 0
         self.current_item["desc_link"]=params["href"].strip()
-        self.current_item["link"] = "http://www.cpasbien.pe/dl_torrent.php?permalien="+str(params["href"].strip().split("/")[6].split(".")[0])
+        self.current_item["link"] = "http://www.torrent9.pe/dl_torrent.php?permalien="+str(params["href"].strip().split("/")[6].split(".")[0])
 
     def handle_data(self, data):
 	if isinstance(self.data_counter,int):
@@ -572,10 +570,10 @@ class t411(object):                             ###
       file = os.fdopen(file, "wb")
       file.write(dat)
       file.close()
-      print path+" "+url   
+      print path+" "+url
     else:
       webbrowser.open(url, new=2, autoraise=True)
-      return    
+      return
 
   class SimpleSGMLParser(sgmllib.SGMLParser):
     def __init__(self, results, url, *args):
@@ -584,7 +582,7 @@ class t411(object):                             ###
       self.td_counter = None
       self.current_item = None
       self.results = results
-      
+
     def start_a(self, attr):
       params = dict(attr)
       if params.has_key("href") and params["href"].startswith("//www.t411.me/torrents"):
@@ -594,7 +592,7 @@ class t411(object):                             ###
         self.current_item["name"] = params["title"].strip()
       if params.has_key("href") and params["href"].startswith("/torrents/nfo/"):
         self.current_item["link"] = self.url + params["href"].strip().replace("/torrents/nfo/", "/torrents/download/")
-    
+
     def handle_data(self, data):
       if self.td_counter == 4:
         if not self.current_item.has_key("size"):
@@ -608,7 +606,7 @@ class t411(object):                             ###
         if not self.current_item.has_key("leech"):
           self.current_item["leech"] = ""
         self.current_item["leech"]+= data.strip()
-      
+
     def start_td(self,attr):
         if isinstance(self.td_counter,int):
           self.td_counter += 1
@@ -642,8 +640,6 @@ class t411(object):                             ###
         break
       i += 1'
 
-##### Lancement du script ! 
+##### Lancement du script !
 
 intro
-
-
