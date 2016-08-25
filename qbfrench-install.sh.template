@@ -127,16 +127,16 @@ Entrez votre mot de passe :" 14 60 2> $fichtemp
 		wget --quiet --post-data="login=$login&password=$password&remember=1" \
 			--save-cookies=cookies.txt --keep-session-cookies \
 			"http://www.t411.ch/users/login/" -O /dev/null
-		test=`cat cookies.txt | grep "pass"`
-		if [ "$test" = '' ]
+		for dest in "${destination}" "${destination_py3}"; do
+			mkdir -p "$dest"
+			print_t411 | sed -e "s/Your_User/$login/" -e "s/Your_Pass/$password/" > "${dest}/t411.py"
+		done
+
+		if grep -q "pass" cookies.txt
 		then
-			reconf
-		else
-			for dest in "${destination}" "${destination_py3}"; do
-				mkdir -p "$dest"
-				print_t411 | sed -e "s/Your_User/$login/" -e "s/Your_Pass/$password/" > "${dest}/t411.py"
-			done
 			end
+		else
+			reconf
 		fi
 
 	else
