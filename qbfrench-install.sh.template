@@ -3,7 +3,8 @@
 
 
 # Déclaration des variables
-destination="$HOME/.local/share/data/qBittorrent/nova3/engines"
+destination="$HOME/.local/share/data/qBittorrent/nova/engines"
+destination_py3="$HOME/.local/share/data/qBittorrent/nova3/engines"
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
 
@@ -84,7 +85,10 @@ function instal()
 	then
 		define_login
 	else
-		"print_$1" > "$destination/$1.py"
+		for dest in "${destination}" "${destination_py3}"; do
+			mkdir -p "$dest"
+			"print_$1" > "$dest/$1.py"
+		done
 	fi
 }
 
@@ -128,7 +132,10 @@ Entrez votre mot de passe :" 14 60 2> $fichtemp
 		then
 			reconf
 		else
-			print_t411 | sed "s/Your_User/$login/" | sed "s/Your_Pass/$password/" > "${destination}/t411.py"
+			for dest in "${destination}" "${destination_py3}"; do
+				mkdir -p "$dest"
+				print_t411 | sed -e "s/Your_User/$login/" -e "s/Your_Pass/$password/" > "${dest}/t411.py"
+			done
 			end
 		fi
 

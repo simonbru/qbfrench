@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Inline tracker plugins into install script"""
+"""Inline tracker plugins into the install script"""
 
 import os
 
